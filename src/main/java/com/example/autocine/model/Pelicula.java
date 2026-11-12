@@ -17,15 +17,21 @@ public class Pelicula {
     private String titulo;
     private String genero;
     private int duracionMinutos;
+    private String sinopsis;
+    private String director;
+    private String imagenUrl;
 
     // Constructores
     public Pelicula() {}
 
-    public Pelicula(Long id, String titulo, String genero, int duracionMinutos) {
+    public Pelicula(Long id, String titulo, String genero, int duracionMinutos, String sinopsis, String director, String imagen) {
         this.id = id;
         this.titulo = titulo;
         this.genero = genero;
         this.duracionMinutos = duracionMinutos;
+        this.sinopsis = sinopsis;
+        this.director = director;
+        this.imagenUrl = imagen;
     }
 
     // Getters y Setters
@@ -40,4 +46,13 @@ public class Pelicula {
     
     public int getDuracionMinutos() { return duracionMinutos; }
     public void setDuracionMinutos(int duracionMinutos) { this.duracionMinutos = duracionMinutos; }
+
+    public String getSinopsis() { return sinopsis; }
+    public void setSinopsis(String sinopsis) { this.sinopsis = sinopsis; }
+
+    public String getDirector() { return director; }
+    public void setDirector(String director) { this.director = director; }
+
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
 }

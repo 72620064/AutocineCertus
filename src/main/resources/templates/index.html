@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autocine Certus | Vive la magia del cine desde tu auto</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons (para los iconos estilo Cineplanet/Cinemark) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background-color: #0b0d17;
+            color: #ffffff;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        /* Navbar estilo Cineplanet */
+        .navbar-cine {
+            background-color: #070912;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0.85rem 0;
+        }
+        .nav-link {
+            color: #d1d5db !important;
+            font-weight: 500;
+            margin: 0 0.4rem;
+            transition: color 0.2s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #ffc107 !important;
+        }
+        .badge-nav {
+            position: absolute;
+            top: -8px;
+            right: -12px;
+            font-size: 0.65rem;
+            padding: 0.25em 0.55em;
+            border-radius: 10px;
+        }
+        /* Hero Banner horizontal completo */
+        .hero-autocine {
+            background: linear-gradient(rgba(7, 9, 18, 0.65), rgba(11, 13, 23, 0.95)),
+                        url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            min-height: 460px;
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid #ffc107;
+        }
+        /* Tarjetas oscuras profesionales */
+        .card-cine {
+            background-color: #141829;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .card-cine:hover {
+            transform: translateY(-6px);
+            border-color: #ffc107;
+        }
+        .poster-placeholder {
+            height: 220px;
+            background: linear-gradient(135deg, #1e2542 0%, #0f1324 100%);
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .section-title {
+            border-left: 4px solid #ffc107;
+            padding-left: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .promo-card {
+            background: linear-gradient(135deg, #1a1f36 0%, #111526 100%);
+            border: 1px dashed rgba(255, 193, 7, 0.5);
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. NAVBAR ESTILO CINEPLANET / CINEMARK -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-cine sticky-top shadow">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand d-flex align-items-center fw-bold fs-4 text-white" href="/">
+                <i class="bi bi-film text-warning me-2 fs-3"></i>
+                <span>Autocine <span class="text-warning">CERTUS</span></span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCine">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Menú Central con los módulos del proyecto -->
+            <div class="collapse navbar-collapse" id="navbarCine">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" href="/">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/peliculas">Películas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/sedes">Sedes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/funciones">Funciones</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/confiteria">Confitería</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/categorias">Categorías</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#promociones">Promociones</a></li>
+                </ul>
+
+                <!-- Iconos Derechos (Socio / Buscar / Ayuda) -->
+                <div class="d-flex align-items-center gap-4 mt-3 mt-lg-0">
+                    <a href="/peliculas" class="text-white text-decoration-none position-relative" title="Gestionar Módulos">
+                        <i class="bi bi-person-circle fs-4"></i>
+                        <span class="badge bg-danger badge-nav">Únete</span>
+                    </a>
+                    <a href="#cartelera" class="text-white text-decoration-none" title="Buscar Película">
+                        <i class="bi bi-search fs-5"></i>
+                    </a>
+                    <a href="#sedes" class="text-white text-decoration-none position-relative" title="Ayuda y Sedes">
+                        <i class="bi bi-question-circle fs-4"></i>
+                        <span class="badge bg-danger badge-nav">Ayuda</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 2. HERO BANNER HORIZONTAL COMPLETO -->
+    <header class="hero-autocine text-center text-white">
+        <div class="container py-5">
+            <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-3 text-uppercase">Experiencia Bajo las Estrellas</span>
+            <h1 class="display-4 fw-bold mb-3">
+                VIVE LA MAGIA DEL CINE EN <span class="text-warning">AUTOCINE CERTUS</span>
+            </h1>
+            <p class="lead text-light mx-auto mb-4" style="max-width: 720px;">
+                Disfruta de los mejores estrenos en pantalla gigante, sonido envolvente directo en la radio de tu vehículo y confitería sin bajar de tu auto.
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="#cartelera" class="btn btn-warning btn-lg text-dark fw-bold px-4 shadow">
+                    <i class="bi bi-ticket-perforated-fill me-2"></i>Ver Cartelera
+                </a>
+                <a href="/peliculas" class="btn btn-outline-light btn-lg px-4">
+                    <i class="bi bi-gear-fill me-2"></i>Panel de Gestión
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL (SECCIONES VERTICALES) -->
+    <main class="container my-5">
+
+        <!-- 3. SECCIÓN: CARTELERA ACTUAL (DINÁMICA CON THYMELEAF) -->
+        <section id="cartelera" class="mb-5 pt-2">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-title mb-0">CARTELERA ACTUAL</h2>
+                <a href="/peliculas" class="btn btn-sm btn-outline-warning">Administrar Películas <i class="bi bi-arrow-right"></i></a>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <!-- Bucle Thymeleaf sobre 'peliculas' -->
+                <div class="col" th:each="pelicula : ${peliculas}">
+                    <div class="card card-cine h-100 text-white shadow overflow-hidden">
+                        <!-- Contenedor superior de imagen + badge de género -->
+                        <div class="position-relative">
+                            <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-3 fw-bold shadow-sm"
+                                th:text="${pelicula.genero}">Género</span>
+                            <img th:src="${pelicula.imagenUrl != null and !pelicula.imagenUrl.isEmpty() ? pelicula.imagenUrl : '/IMG/pelicula-default.jpg'}"
+                                class="card-img-top"
+                                style="height: 240px; object-fit: cover;"
+                                alt="Póster de película">
+                        </div>
+
+                        <!-- Cuerpo de la tarjeta -->
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold text-warning mb-2" th:text="${pelicula.titulo}">Título de la Película</h5>
+                            <p class="card-text text-secondary small flex-grow-1"
+                            th:text="${pelicula.sinopsis != null ? pelicula.sinopsis : 'Disfruta esta función especial en nuestras pantallas gigantes.'}">
+                                Sinopsis de la película
+                            </p>
+                            <hr class="border-secondary my-2">
+                            <div class="d-flex justify-content-between small text-light mb-3">
+                                <span><i class="bi bi-clock text-warning me-1"></i><span th:text="${pelicula.duracionMinutos}">120</span> min</span>
+                                <span><i class="bi bi-person-video3 text-warning me-1"></i><span th:text="${pelicula.director != null ? pelicula.director : 'Estreno'}">Director</span></span>
+                            </div>
+                            <a href="/funciones" class="btn btn-warning text-dark fw-bold w-100">
+                                <i class="bi bi-calendar-check me-1"></i>Ver Funciones
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mensaje cuando aún no hay películas en BD -->
+                <div class="col-12" th:if="${#lists.isEmpty(peliculas)}">
+                    <div class="alert alert-dark border-warning text-center py-4">
+                        <i class="bi bi-film text-warning fs-2 d-block mb-2"></i>
+                        No hay películas registradas en cartelera todavía.
+                        <a href="/peliculas" class="text-warning fw-bold ms-1">Registra la primera aquí</a>.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. SECCIÓN: CONFITERÍA Y SNACKS (DINÁMICA CON THYMELEAF) -->
+        <section id="confiteria" class="mb-5 pt-3">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-title mb-0">CONFITERÍA Y SNACKS</h2>
+                <a href="/confiteria" class="btn btn-sm btn-outline-warning">Administrar Confitería <i class="bi bi-arrow-right"></i></a>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                <!-- Bucle Thymeleaf sobre 'confiterias' -->
+                <div class="col" th:each="prod : ${confiterias}">
+                    <div class="card card-cine h-100 text-white shadow text-center p-3">
+                        <div class="py-3">
+                            <i class="bi bi-cup-straw text-warning" style="font-size: 3.5rem;"></i>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title fw-bold mb-2" th:text="${prod.nombre}">Combo Autocine</h6>
+                            <p class="fs-4 fw-bold text-warning mt-auto mb-3">
+                                S/ <span th:text="${#numbers.formatDecimal(prod.precio, 1, 2)}">25.00</span>
+                            </p>
+                            <a href="/confiteria" class="btn btn-outline-warning btn-sm w-100 fw-semibold">
+                                <i class="bi bi-bag-plus me-1"></i>Seleccionar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mensaje cuando aún no hay productos de confitería -->
+                <div class="col-12" th:if="${#lists.isEmpty(confiterias)}">
+                    <div class="alert alert-dark border-warning text-center py-4">
+                        No hay productos de confitería registrados por el momento.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. SECCIÓN: PROMOCIONES EXCLUSIVAS -->
+        <section id="promociones" class="mb-5 pt-3">
+            <h2 class="section-title mb-4">PROMOCIONES Y BENEFICIOS</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="promo-card p-4 h-100">
+                        <span class="badge bg-warning text-dark fw-bold mb-2">SOCIO CERTUS</span>
+                        <h5 class="fw-bold text-white">20% de Descuento en Entradas</h5>
+                        <p class="text-secondary small mb-0">Válido de lunes a miércoles presentando tu código de estudiante o socio en cualquier sede.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="promo-card p-4 h-100">
+                        <span class="badge bg-danger text-white fw-bold mb-2">COMBO PAREJA</span>
+                        <h5 class="fw-bold text-white">Entrada Auto + Canchita Gigante</h5>
+                        <p class="text-secondary small mb-0">Disfruta la función con 2 bebidas grandes incluidas directo a la ventana de tu vehículo.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="promo-card p-4 h-100">
+                        <span class="badge bg-info text-dark fw-bold mb-2">NOCHE DE ESTRENO</span>
+                        <h5 class="fw-bold text-white">Zona VIP Primera Fila</h5>
+                        <p class="text-secondary small mb-0">Reserva los espacios frontales con atención preferencial en confitería durante toda la película.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. SECCIÓN: NUESTRAS SEDES -->
+        <section id="sedes" class="mb-4 pt-3">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-title mb-0">NUESTRAS SEDES</h2>
+                <a href="/sedes" class="btn btn-sm btn-outline-warning">Ver Todas las Sedes <i class="bi bi-geo-alt"></i></a>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card card-cine p-4 text-white">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-geo-alt-fill text-warning fs-3 me-3"></i>
+                            <div>
+                                <h5 class="fw-bold mb-0">Autocine Certus - Sede Costa Verde</h5>
+                                <small class="text-secondary">Circuito de Playas, Magdalena del Mar - Lima</small>
+                            </div>
+                        </div>
+                        <p class="text-light small mt-2 mb-0">Capacidad para 120 vehículos • Pantalla LED 4K • Frecuencia FM 98.5</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card card-cine p-4 text-white">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-geo-alt-fill text-warning fs-3 me-3"></i>
+                            <div>
+                                <h5 class="fw-bold mb-0">Autocine Certus - Sede Lima Norte</h5>
+                                <small class="text-secondary">Av. Alfredo Mendiola, Independencia - Lima</small>
+                            </div>
+                        </div>
+                        <p class="text-light small mt-2 mb-0">Capacidad para 95 vehículos • Zona VIP • Servicio Express a tu auto</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 7. FOOTER PROFESIONAL -->
+    <footer class="bg-black text-secondary py-4 border-top border-secondary mt-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <span class="fw-bold text-white"><i class="bi bi-film text-warning me-2"></i>Autocine CERTUS</span>
+                    <p class="small mb-0 mt-1">&copy; 2026 Proyecto Diseño de Soluciones Basadas en Servicios. Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="/api/peliculas" class="text-secondary text-decoration-none small me-3">API Películas</a>
+                    <a href="/api/confiteria" class="text-secondary text-decoration-none small me-3">API Confitería</a>
+                    <a href="/api/funciones" class="text-secondary text-decoration-none small">API Funciones</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
