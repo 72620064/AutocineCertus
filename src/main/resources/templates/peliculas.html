@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartelera de Películas | Autocine Certus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background-color: #0b0d17; color: #ffffff; font-family: 'Segoe UI', sans-serif; }
+        .navbar-cine { background-color: #070912; border-bottom: 1px solid rgba(255, 255, 255, 0.12); padding: 0.85rem 0; }
+        .nav-link { color: #d1d5db !important; font-weight: 500; margin: 0 0.4rem; }
+        .nav-link:hover, .nav-link.active { color: #ffc107 !important; }
+        .movie-card { background-color: #141829; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; }
+        .movie-card:hover { transform: translateY(-6px); box-shadow: 0 12px 24px rgba(255, 193, 7, 0.18); border-color: rgba(255, 193, 7, 0.4); }
+        .poster-wrapper { position: relative; height: 360px; overflow: hidden; }
+        .poster-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+        .movie-card:hover .poster-wrapper img { transform: scale(1.05); }
+        .badge-cat { position: absolute; top: 12px; left: 12px; background: rgba(7, 9, 18, 0.88); border: 1px solid #ffc107; color: #ffc107; }
+        .form-control, .form-select { background-color: #141829; border: 1px solid #2c324d; color: #ffffff; }
+        .form-control:focus, .form-select:focus { background-color: #141829; color: #ffffff; border-color: #ffc107; box-shadow: none; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-cine sticky-top shadow">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center fw-bold fs-4 text-white" href="/">
+                <i class="bi bi-film text-warning me-2 fs-3"></i>
+                <span>Autocine <span class="text-warning">CERTUS</span></span>
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/peliculas">Películas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/sedes">Sedes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/funciones">Funciones</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/confiteria">Confitería</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/categorias">Categorías</a></li>
+                </ul>
+                <a href="/admin" class="btn btn-outline-warning btn-sm rounded-pill px-3">
+                    <i class="bi bi-gear-fill me-1"></i>Panel Admin
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="py-5" style="background: linear-gradient(135deg, #141829 0%, #0b0d17 100%); border-bottom: 1px solid rgba(255,255,255,0.08);">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-5">
+                    <span class="badge bg-warning text-dark fw-bold mb-2">CARTELERA ACTUAL</span>
+                    <h1 class="display-5 fw-bold mb-2">Películas en Pantalla</h1>
+                    <p class="text-secondary mb-0">Disfruta los mejores estrenos y clásicos desde la comodidad de tu auto con sonido FM envolvente.</p>
+                </div>
+                <div class="col-lg-7">
+                    <form th:action="@{/peliculas}" method="get" class="row g-2 bg-dark p-3 rounded-4 border border-secondary border-opacity-25">
+                        <div class="col-md-5">
+                            <input type="text" name="buscar" th:value="${buscar}" class="form-control" placeholder="Buscar película o director...">
+                        </div>
+                        <div class="col-md-4">
+                            <select name="categoriaId" class="form-select">
+                                <option value="">Todas las categorías</option>
+                                <option th:each="cat : ${categorias}"
+                                        th:value="${cat.id}"
+                                        th:text="${cat.nombre}"
+                                        th:selected="${categoriaSeleccionada != null and categoriaSeleccionada == cat.id}">
+                                    Acción
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex gap-1">
+                            <button type="submit" class="btn btn-warning text-dark fw-bold w-100">
+                                <i class="bi bi-search"></i> Filtrar
+                            </button>
+                            <a th:if="${(buscar != null and !buscar.isEmpty()) or categoriaSeleccionada != null}"
+                               href="/peliculas" class="btn btn-outline-light" title="Limpiar">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container my-5">
+        <div class="row g-4">
+            <div class="col-sm-6 col-md-4 col-lg-3" th:each="p : ${peliculas}">
+                <div class="card movie-card h-100">
+                    <div class="poster-wrapper">
+                        <img th:src="${p.imagenUrl != null and !p.imagenUrl.isEmpty() ? p.imagenUrl : 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80'}"
+                             th:alt="${p.titulo}">
+                        <span class="badge badge-cat px-3 py-2 rounded-pill"
+                              th:text="${p.categoria != null ? p.categoria.nombre : 'Estreno'}">Ciencia Ficción</span>
+                    </div>
+                    <div class="card-body d-flex flex-column p-4">
+                        <h5 class="fw-bold text-white mb-1" th:text="${p.titulo}">Título Película</h5>
+                        <div class="small text-secondary mb-3">
+                            <i class="bi bi-clock text-warning me-1"></i><span th:text="${p.duracionMinutos + ' min'}">120 min</span>
+                            <span class="mx-2">•</span>
+                            <i class="bi bi-camera-reels text-warning me-1"></i><span th:text="${p.director}">Director</span>
+                        </div>
+                        <p class="small text-light opacity-75 flex-grow-1"
+                           th:text="${p.sinopsis != null and !p.sinopsis.isEmpty() ? p.sinopsis : 'Vive la experiencia del autocine bajo las estrellas con pantalla gigante 4K.'}">
+                            Sinopsis de la película...
+                        </p>
+                        <a th:href="@{/funciones(peliculaId=${p.id})}" class="btn btn-warning text-dark fw-bold w-100 mt-3 rounded-pill">
+                            <i class="bi bi-ticket-perforated-fill me-1"></i>Ver Horarios y Entradas
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 text-center py-5" th:if="${#lists.isEmpty(peliculas)}">
+                <i class="bi bi-film display-1 text-secondary opacity-50"></i>
+                <h4 class="mt-3 text-secondary">No encontramos películas con ese filtro</h4>
+                <a href="/peliculas" class="btn btn-outline-warning mt-2">Ver toda la cartelera</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-4 text-center text-secondary border-top border-secondary border-opacity-25 mt-5">
+        <small>© 2026 Autocine Certus — Vive el cine desde tu auto.</small>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

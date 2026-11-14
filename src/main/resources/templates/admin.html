@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrativo | Autocine Certus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background-color: #0b0d17; color: #ffffff; font-family: 'Segoe UI', sans-serif; }
+        .navbar-cine { background-color: #070912; border-bottom: 1px solid rgba(255, 193, 7, 0.3); padding: 0.85rem 0; }
+        .card-cine { background-color: #141829; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; }
+        .form-control, .form-select { background-color: #0b0d17; border: 1px solid #2c324d; color: #ffffff; }
+        .form-control:focus, .form-select:focus { background-color: #0b0d17; color: #ffffff; border-color: #ffc107; box-shadow: none; }
+        .nav-pills .nav-link { color: #d1d5db; background-color: #141829; border: 1px solid rgba(255,255,255,0.1); margin-right: 6px; }
+        .nav-pills .nav-link.active { background-color: #ffc107; color: #000000; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-dark navbar-cine sticky-top shadow">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-white" href="/admin">
+                <i class="bi bi-shield-lock-fill text-warning me-2"></i>
+                Panel Admin <span class="text-warning">Autocine CERTUS</span>
+            </a>
+            <a href="/" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                <i class="bi bi-eye-fill me-1"></i>Ver Sitio Público
+            </a>
+        </div>
+    </nav>
+
+    <main class="container my-4">
+        <ul class="nav nav-pills mb-4 flex-wrap gap-2">
+            <li class="nav-item"><a class="nav-link" th:classappend="${tab == 'peliculas' ? 'active' : ''}" href="/admin?tab=peliculas">Películas</a></li>
+            <li class="nav-item"><a class="nav-link" th:classappend="${tab == 'categorias' ? 'active' : ''}" href="/admin?tab=categorias">Categorías</a></li>
+            <li class="nav-item"><a class="nav-link" th:classappend="${tab == 'sedes' ? 'active' : ''}" href="/admin?tab=sedes">Sedes</a></li>
+            <li class="nav-item"><a class="nav-link" th:classappend="${tab == 'salas' ? 'active' : ''}" href="/admin?tab=salas">Salas / Zonas</a></li>
+            <li class="nav-item"><a class="nav-link" th:classappend="${tab == 'funciones' ? 'active' : ''}" href="/admin?tab=funciones">Funciones</a></li>
+            <li class="nav-item"><a class="nav-link" th:classappend="${tab == 'confiteria' ? 'active' : ''}" href="/admin?tab=confiteria">Confitería</a></li>
+        </ul>
+
+        <!-- TAB 1: PELÍCULAS -->
+        <div th:if="${tab == 'peliculas'}" class="row g-4">
+            <div class="col-lg-4">
+                <div class="card card-cine p-4">
+                    <h5 class="text-warning fw-bold mb-3" th:text="${peliculaForm.id != null ? 'Editar Película #' + peliculaForm.id : 'Nueva Película'}">Nueva Película</h5>
+                    <form th:action="@{/admin/peliculas/guardar}" th:object="${peliculaForm}" method="post">
+                        <input type="hidden" th:field="*{id}"/>
+                        <div class="mb-2"><label class="small text-secondary">Título *</label><input type="text" class="form-control" th:field="*{titulo}" required></div>
+                        <div class="mb-2">
+                            <label class="small text-secondary">Categoría *</label>
+                            <select class="form-select" th:field="*{categoria.id}" required>
+                                <option value="">Seleccione...</option>
+                                <option th:each="c : ${categorias}" th:value="${c.id}" th:text="${c.nombre}"></option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-2"><label class="small text-secondary">Duración (min) *</label><input type="number" class="form-control" th:field="*{duracionMinutos}" required></div>
+                            <div class="col-6 mb-2"><label class="small text-secondary">Director *</label><input type="text" class="form-control" th:field="*{director}" required></div>
+                        </div>
+                        <div class="mb-2"><label class="small text-secondary">URL Imagen Póster</label><input type="text" class="form-control" th:field="*{imagenUrl}" placeholder="https://..."></div>
+                        <div class="mb-3"><label class="small text-secondary">Sinopsis</label><textarea class="form-control" rows="2" th:field="*{sinopsis}"></textarea></div>
+                        <button type="submit" class="btn btn-warning text-dark fw-bold w-100">Guardar Película</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card card-cine p-4 table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead><tr><th>ID</th><th>Título</th><th>Categoría</th><th>Duración</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            <tr th:each="p : ${peliculas}">
+                                <td th:text="${p.id}"></td>
+                                <td class="fw-bold text-warning" th:text="${p.titulo}"></td>
+                                <td th:text="${p.categoria != null ? p.categoria.nombre : '-'}"></td>
+                                <td th:text="${p.duracionMinutos + ' min'}"></td>
+                                <td>
+                                    <a th:href="@{/admin/peliculas/editar/{id}(id=${p.id})}" class="btn btn-sm btn-outline-info me-1"><i class="bi bi-pencil"></i></a>
+                                    <a th:href="@{/admin/peliculas/eliminar/{id}(id=${p.id})}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: CATEGORÍAS -->
+        <div th:if="${tab == 'categorias'}" class="row g-4">
+            <div class="col-lg-4">
+                <div class="card card-cine p-4">
+                    <h5 class="text-warning fw-bold mb-3">Nueva Categoría</h5>
+                    <form th:action="@{/admin/categorias/guardar}" th:object="${categoriaForm}" method="post">
+                        <div class="mb-2"><label class="small text-secondary">Nombre *</label><input type="text" class="form-control" th:field="*{nombre}" required></div>
+                        <div class="mb-3"><label class="small text-secondary">Descripción</label><textarea class="form-control" rows="2" th:field="*{descripcion}"></textarea></div>
+                        <button type="submit" class="btn btn-warning text-dark fw-bold w-100">Guardar Categoría</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card card-cine p-4 table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            <tr th:each="c : ${categorias}">
+                                <td th:text="${c.id}"></td>
+                                <td class="fw-bold text-warning" th:text="${c.nombre}"></td>
+                                <td th:text="${c.descripcion}"></td>
+                                <td><a th:href="@{/admin/categorias/eliminar/{id}(id=${c.id})}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: SEDES -->
+        <div th:if="${tab == 'sedes'}" class="row g-4">
+            <div class="col-lg-4">
+                <div class="card card-cine p-4">
+                    <h5 class="text-warning fw-bold mb-3">Nueva Sede</h5>
+                    <form th:action="@{/admin/sedes/guardar}" th:object="${sedeForm}" method="post">
+                        <div class="mb-2"><label class="small text-secondary">Nombre *</label><input type="text" class="form-control" th:field="*{nombre}" required></div>
+                        <div class="mb-2"><label class="small text-secondary">Dirección *</label><input type="text" class="form-control" th:field="*{direccion}" required></div>
+                        <div class="mb-3"><label class="small text-secondary">Ciudad *</label><input type="text" class="form-control" th:field="*{ciudad}" required></div>
+                        <button type="submit" class="btn btn-warning text-dark fw-bold w-100">Guardar Sede</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card card-cine p-4 table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead><tr><th>ID</th><th>Nombre</th><th>Dirección</th><th>Ciudad</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            <tr th:each="s : ${sedes}">
+                                <td th:text="${s.id}"></td>
+                                <td class="fw-bold text-warning" th:text="${s.nombre}"></td>
+                                <td th:text="${s.direccion}"></td>
+                                <td th:text="${s.ciudad}"></td>
+                                <td><a th:href="@{/admin/sedes/eliminar/{id}(id=${s.id})}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: SALAS -->
+        <div th:if="${tab == 'salas'}" class="row g-4">
+            <div class="col-lg-4">
+                <div class="card card-cine p-4">
+                    <h5 class="text-warning fw-bold mb-3">Nueva Sala / Zona</h5>
+                    <form th:action="@{/admin/salas/guardar}" th:object="${salaForm}" method="post">
+                        <div class="mb-2"><label class="small text-secondary">Nombre Sala *</label><input type="text" class="form-control" th:field="*{nombre}" required></div>
+                        <div class="mb-2"><label class="small text-secondary">Capacidad Autos *</label><input type="number" class="form-control" th:field="*{capacidad}" required></div>
+                        <div class="mb-3">
+                            <label class="small text-secondary">Sede *</label>
+                            <select class="form-select" th:field="*{sede.id}" required>
+                                <option value="">Seleccione...</option>
+                                <option th:each="s : ${sedes}" th:value="${s.id}" th:text="${s.nombre}"></option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-warning text-dark fw-bold w-100">Guardar Sala</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card card-cine p-4 table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead><tr><th>ID</th><th>Sala</th><th>Capacidad</th><th>Sede</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            <tr th:each="sa : ${salas}">
+                                <td th:text="${sa.id}"></td>
+                                <td class="fw-bold text-warning" th:text="${sa.nombre}"></td>
+                                <td th:text="${sa.capacidad + ' autos'}"></td>
+                                <td th:text="${sa.sede != null ? sa.sede.nombre : '-'}"></td>
+                                <td><a th:href="@{/admin/salas/eliminar/{id}(id=${sa.id})}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: FUNCIONES -->
+        <div th:if="${tab == 'funciones'}" class="row g-4">
+            <div class="col-lg-4">
+                <div class="card card-cine p-4">
+                    <h5 class="text-warning fw-bold mb-3">Programar Función</h5>
+                    <form th:action="@{/admin/funciones/guardar}" th:object="${funcionForm}" method="post">
+                        <div class="mb-2">
+                            <label class="small text-secondary">Película *</label>
+                            <select class="form-select" th:field="*{pelicula.id}" required>
+                                <option value="">Seleccione...</option>
+                                <option th:each="p : ${peliculas}" th:value="${p.id}" th:text="${p.titulo}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="small text-secondary">Sala / Zona *</label>
+                            <select class="form-select" th:field="*{sala.id}" required>
+                                <option value="">Seleccione...</option>
+                                <option th:each="sa : ${salas}" th:value="${sa.id}" th:text="${sa.nombre}"></option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-2"><label class="small text-secondary">Fecha *</label><input type="date" class="form-control" th:field="*{fecha}" required></div>
+                            <div class="col-6 mb-2"><label class="small text-secondary">Hora *</label><input type="time" step="1" class="form-control" th:field="*{hora}" required></div>
+                        </div>
+                        <div class="mb-3"><label class="small text-secondary">Precio (S/) *</label><input type="number" step="0.01" class="form-control" th:field="*{precio}" required></div>
+                        <button type="submit" class="btn btn-warning text-dark fw-bold w-100">Guardar Función</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card card-cine p-4 table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead><tr><th>ID</th><th>Película</th><th>Sala</th><th>Fecha/Hora</th><th>Precio</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            <tr th:each="f : ${funciones}">
+                                <td th:text="${f.id}"></td>
+                                <td class="fw-bold text-warning" th:text="${f.pelicula != null ? f.pelicula.titulo : '-'}"></td>
+                                <td th:text="${f.sala != null ? f.sala.nombre : '-'}"></td>
+                                <td th:text="${f.fecha + ' ' + f.hora}"></td>
+                                <td th:text="${'S/ ' + f.precio}"></td>
+                                <td><a th:href="@{/admin/funciones/eliminar/{id}(id=${f.id})}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 6: CONFITERÍA -->
+        <div th:if="${tab == 'confiteria'}" class="row g-4">
+            <div class="col-lg-4">
+                <div class="card card-cine p-4">
+                    <h5 class="text-warning fw-bold mb-3">Nuevo Combo / Producto</h5>
+                    <form th:action="@{/admin/confiteria/guardar}" th:object="${confiteriaForm}" method="post">
+                        <div class="mb-2"><label class="small text-secondary">Nombre *</label><input type="text" class="form-control" th:field="*{nombre}" required></div>
+                        <div class="mb-2"><label class="small text-secondary">Descripción</label><textarea class="form-control" rows="2" th:field="*{descripcion}"></textarea></div>
+                        <div class="row">
+                            <div class="col-6 mb-2"><label class="small text-secondary">Precio (S/) *</label><input type="number" step="0.01" class="form-control" th:field="*{precio}" required></div>
+                            <div class="col-6 mb-2"><label class="small text-secondary">Stock *</label><input type="number" class="form-control" th:field="*{stock}" required></div>
+                        </div>
+                        <div class="mb-3"><label class="small text-secondary">URL Imagen</label><input type="text" class="form-control" th:field="*{imagenUrl}" placeholder="https://..."></div>
+                        <button type="submit" class="btn btn-warning text-dark fw-bold w-100">Guardar Producto</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card card-cine p-4 table-responsive">
+                    <table class="table table-dark table-hover align-middle mb-0">
+                        <thead><tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            <tr th:each="c : ${confiterias}">
+                                <td th:text="${c.id}"></td>
+                                <td class="fw-bold text-warning" th:text="${c.nombre}"></td>
+                                <td th:text="${'S/ ' + c.precio}"></td>
+                                <td th:text="${c.stock}"></td>
+                                <td><a th:href="@{/admin/confiteria/eliminar/{id}(id=${c.id})}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

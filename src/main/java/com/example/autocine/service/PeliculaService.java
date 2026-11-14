@@ -33,7 +33,7 @@ public class PeliculaService {
             Pelicula peliculaExistente = peliculaOptional.get();
             
             peliculaExistente.setTitulo(peliculaDetails.getTitulo());
-            peliculaExistente.setGenero(peliculaDetails.getGenero());
+            peliculaExistente.setCategoria(peliculaDetails.getCategoria());            
             peliculaExistente.setDuracionMinutos(peliculaDetails.getDuracionMinutos());
             peliculaExistente.setSinopsis(peliculaDetails.getSinopsis());
             peliculaExistente.setDirector(peliculaDetails.getDirector());

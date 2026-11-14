@@ -14,6 +14,7 @@ public class Confiteria {
     private String descripcion;
     private double precio;
     private int stock;
+    private String imagenUrl;
 
     // Getters y Setters
     public Long getId() { return id; }
@@ -30,4 +31,7 @@ public class Confiteria {
 
     public int getStock() { return stock; }
     public void setStock(int stock) { this.stock = stock; }
+
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
 }

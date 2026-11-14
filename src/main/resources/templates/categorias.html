@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorías y Géneros | Autocine Certus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background-color: #0b0d17; color: #ffffff; font-family: 'Segoe UI', sans-serif; }
+        .navbar-cine { background-color: #070912; border-bottom: 1px solid rgba(255, 255, 255, 0.12); padding: 0.85rem 0; }
+        .nav-link { color: #d1d5db !important; font-weight: 500; margin: 0 0.4rem; }
+        .nav-link:hover, .nav-link.active { color: #ffc107 !important; }
+        .cat-card { background: linear-gradient(145deg, #161b2e 0%, #0f1322 100%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; transition: 0.3s; }
+        .cat-card:hover { transform: translateY(-6px); border-color: #ffc107; box-shadow: 0 12px 24px rgba(255, 193, 7, 0.15); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-cine sticky-top shadow">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center fw-bold fs-4 text-white" href="/">
+                <i class="bi bi-film text-warning me-2 fs-3"></i>
+                <span>Autocine <span class="text-warning">CERTUS</span></span>
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/peliculas">Películas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/sedes">Sedes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/funciones">Funciones</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/confiteria">Confitería</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/categorias">Categorías</a></li>
+                </ul>
+                <a href="/admin" class="btn btn-outline-warning btn-sm rounded-pill px-3">
+                    <i class="bi bi-gear-fill me-1"></i>Panel Admin
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="py-5 text-center" style="background: linear-gradient(135deg, #141829 0%, #0b0d17 100%); border-bottom: 1px solid rgba(255,255,255,0.08);">
+        <div class="container">
+            <span class="badge bg-warning text-dark fw-bold mb-2">EXPLORA POR ESTILO</span>
+            <h1 class="display-5 fw-bold">Categorías Cinematográficas</h1>
+            <p class="text-secondary mx-auto" style="max-width: 600px;">Selecciona tu género favorito y descubre las películas programadas en nuestras pantallas al aire libre.</p>
+        </div>
+    </header>
+
+    <main class="container my-5">
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" th:each="cat : ${categorias}">
+                <div class="card cat-card h-100 p-4 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="rounded-circle bg-warning bg-opacity-10 text-warning d-flex align-items-center justify-content-center"
+                             style="width: 54px; height: 54px;">
+                            <i class="bi bi-collection-play-fill fs-3"></i>
+                        </div>
+                        <span class="badge bg-dark border border-warning text-warning">Género Oficial</span>
+                    </div>
+                    <h3 class="fw-bold text-white mb-2" th:text="${cat.nombre}">Ciencia Ficción</h3>
+                    <p class="text-secondary flex-grow-1"
+                       th:text="${cat.descripcion != null and !cat.descripcion.isEmpty() ? cat.descripcion : 'Explora nuestra selección de títulos destacados en esta categoría.'}">
+                        Descripción de la categoría...
+                    </p>
+                    <a th:href="@{/peliculas(categoriaId=${cat.id})}" class="btn btn-outline-warning fw-bold rounded-pill w-100 mt-3">
+                        Explorar Películas <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-12 text-center py-5" th:if="${#lists.isEmpty(categorias)}">
+                <h4 class="text-secondary">Aún no hay categorías publicadas.</h4>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
